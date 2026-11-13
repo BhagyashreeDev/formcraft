@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormCraft — Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased min-h-screen">
+
+  <!-- Top Navigation -->
+  <header class="bg-white border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <a href="/" class="flex items-center space-x-2 font-bold text-gray-900 text-lg tracking-tight">
+          <span class="w-6 h-6 bg-black text-white rounded flex items-center justify-center text-xs font-mono font-bold">F</span>
+          <span>FormCraft</span>
+        </a>
+        <nav class="hidden md:flex space-x-4 text-sm font-medium text-gray-500">
+          <a href="#" class="text-gray-900">Forms</a>
+          <a href="#sandboxSection" class="hover:text-gray-900 transition">Test Sandbox</a>
+          <a href="/api/health" target="_blank" class="hover:text-gray-900 transition">API Status</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button id="openCreateModalBtn" class="bg-gray-900 hover:bg-black text-white text-sm font-medium px-4 py-2 rounded-lg transition shadow-sm">
+          + Create Form
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Body -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    
+    <!-- Header title + Stats row -->
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Forms Dashboard</h1>
+      <p class="text-sm text-gray-500 mt-1">Manage your active forms, grab embed code, and review visitor submissions.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Active Forms</p>
+          <p id="statTotalForms" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Submissions</p>
+          <p id="statTotalSubmissions" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Spam Filtered</p>
+          <p id="statSpamCaught" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forms Section -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-gray-900">Your Endpoints</h2>
+      </div>
+
+      <!-- Container where JavaScript injects the cards -->
+      <div id="formsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+
+    <!-- Interactive Live Sandbox (For Testing & Portfolio Demos) -->
+    <section id="sandboxSection" class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mt-10">
+      <div class="max-w-xl">
+        <h3 class="text-base font-semibold text-gray-900">Test Your Form Endpoint</h3>
+        <p class="text-xs text-gray-500 mt-1">
+          Simulate a real user submitting data from any website. The message will save straight into your MongoDB Atlas database.
+        </p>
+
+        <form id="sandboxForm" class="mt-5 space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Select Target Form</label>
+            <select id="sandboxFormSelect" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+              <option value="">Select a form...</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Your Name</label>
+              <input type="text" id="sandboxName" required placeholder="John Doe" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Your Email</label>
+              <input type="email" id="sandboxEmail" required placeholder="john@example.com" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Message</label>
+            <textarea id="sandboxMessage" rows="3" required placeholder="Type your message here..." class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" id="sandboxIsSpamTest" class="rounded border-gray-300 text-black focus:ring-0">
+            <label for="sandboxIsSpamTest" class="text-xs text-gray-600 cursor-pointer">
+              Simulate a spam bot (Fills hidden honeypot trap)
+            </label>
+          </div>
+
+          <button type="submit" id="sandboxSubmitBtn" class="bg-gray-900 hover:bg-black text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            Submit Test Message
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Create Form -->
+  <div id="createModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gray-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold text-gray-900 text-base">Create New Form</h3>
+        <button id="closeCreateModalBtn" class="text-gray-400 hover:text-gray-700">✕</button>
+      </div>
+
+      <form id="createFormElement" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Form Name</label>
+          <input type="text" id="newFormName" required placeholder="e.g. Portfolio Contact" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Notification Email</label>
+          <input type="email" id="newFormEmail" required placeholder="you@example.com" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Custom Redirect URL (Optional)</label>
+          <input type="url" id="newFormRedirect" placeholder="https://yoursite.com/thanks" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black">
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" id="cancelCreateModalBtn" class="px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-gray-900">Cancel</button>
+          <button type="submit" class="bg-gray-900 hover:bg-black text-white text-sm font-medium px-4 py-2 rounded-lg transition">Create Form</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Submissions Inbox -->
+  <div id="submissionsModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] flex flex-col p-6 shadow-xl border border-gray-200">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+        <div>
+          <h3 id="modalFormTitle" class="font-semibold text-gray-900 text-base">Submissions</h3>
+          <p id="modalFormSubtitle" class="text-xs text-gray-500">Inbox</p>
+        </div>
+        <button id="closeSubmissionsModalBtn" class="text-gray-400 hover:text-gray-700 text-lg">✕</button>
+      </div>
+
+      <div id="submissionsList" class="flex-1 overflow-y-auto py-4 space-y-3">
+        <!-- Submissions cards will be rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HTML Embed Code -->
+  <div id="embedModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gray-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold text-gray-900 text-base">HTML Embed Code</h3>
+        <button id="closeEmbedModalBtn" class="text-gray-400 hover:text-gray-700">✕</button>
+      </div>
+      <p class="text-xs text-gray-500">
+        Copy this code and paste it into your HTML or React site:
+      </p>
+      <pre id="embedCodeSnippet" class="bg-gray-900 text-gray-100 rounded-lg p-3 text-xs font-mono overflow-x-auto whitespace-pre-wrap"></pre>
+      <div class="flex justify-end">
+        <button id="copyEmbedBtn" class="bg-gray-900 hover:bg-black text-white text-xs font-medium px-4 py-2 rounded-lg transition">
+          Copy Snippet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
