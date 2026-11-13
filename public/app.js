@@ -6,6 +6,7 @@ const formsContainer = document.getElementById('formsContainer');
 const statTotalForms = document.getElementById('statTotalForms');
 const statTotalSubmissions = document.getElementById('statTotalSubmissions');
 const statSpamCaught = document.getElementById('statSpamCaught');
+const sandboxFormSelect = document.getElementById('sandboxFormSelect');
 
 // 3. Modal Popup Elements
 const createModal = document.getElementById('createModal');
@@ -32,6 +33,7 @@ async function loadForms() {
     // Refresh the UI
     renderForms();
     updateGlobalStats();
+    populateSandboxSelect();
   } catch (err) {
     console.error('Error loading forms:', err);
     formsContainer.innerHTML = `
@@ -228,9 +230,14 @@ async function deleteForm(formId) {
 // 9. Populate the Target Dropdown in the Sandbox
 // ==========================================
 function populateSandboxSelect() {
-  sandboxFormSelect.innerHTML = allForms.length
-    ? allForms.map((f) => `<option value="${f._id}">${escapeHtml(f.name)}</option>`).join('')
-    : `<option value="">No forms available</option>`;
+  if (!sandboxFormSelect) return;
+  if (allForms.length === 0) {
+    sandboxFormSelect.innerHTML = `<option value="">No forms available</option>`;
+    return;
+  }
+  sandboxFormSelect.innerHTML =
+    `<option value="">Select a form...</option>` +
+    allForms.map((f) => `<option value="${f._id}">${escapeHtml(f.name)}</option>`).join('');
 }
 
 // ==========================================
